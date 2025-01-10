@@ -70,16 +70,14 @@ class VideoCaptureFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        // Проверка разрешений
-        if (allPermissionsGranted()) {
-            startCamera()
-        } else {
+        if (!allPermissionsGranted()) {
             ActivityCompat.requestPermissions(
                 requireActivity(), REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS
             )
         }
 
-        // Инициализация кнопок
+        startCamera()
+
         binding.buttonRecordVideo.setOnClickListener { toggleRecording() }
         binding.buttonSwitchCamera.setOnClickListener { switchCamera() }
         binding.buttonOpenPhoto.setOnClickListener {
@@ -96,30 +94,24 @@ class VideoCaptureFragment : Fragment() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
 
         cameraProviderFuture.addListener( {
-            // Инициализация CameraProvider
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
-            // Настройка Preview
             val preview = Preview.Builder().build().also {
-                it.setSurfaceProvider(binding.previewView.surfaceProvider)
+                it.surfaceProvider = binding.previewView.surfaceProvider
             }
 
-            // Настройка Recorder
             val recorder = Recorder.Builder()
                 .setQualitySelector(QualitySelector.from(Quality.HD))
                 .build()
             videoCapture = VideoCapture.withOutput(recorder)
 
-            // Выбор камеры
             val cameraSelector = CameraSelector.Builder()
                 .requireLensFacing(lensFacing)
                 .build()
 
             try {
-                // Прерывание предыдущего использования камеры
                 cameraProvider.unbindAll()
 
-                // Привязка use cases к камере
                 cameraProvider.bindToLifecycle(
                     viewLifecycleOwner,
                     cameraSelector,
@@ -128,7 +120,7 @@ class VideoCaptureFragment : Fragment() {
                 )
 
             } catch (exc: Exception) {
-                Log.e(TAG, "Ошибка привязки камеры: ${exc.message}")
+                Log.e(TAG, "Camera binding error: ${exc.message}")
             }
 
         }, ContextCompat.getMainExecutor(requireContext()))
@@ -137,13 +129,11 @@ class VideoCaptureFragment : Fragment() {
     @SuppressLint("MissingPermission")
     private fun toggleRecording() {
         if (isRecording) {
-            // Остановка записи
             recording?.stop()
             isRecording = false
             binding.buttonRecordVideo.setImageResource(R.drawable.ic_shutter_button)
-            Toast.makeText(requireContext(), "Запись остановлена", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Recording stopped", Toast.LENGTH_SHORT).show()
         } else {
-            // Начало записи
             val name = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
                 .format(System.currentTimeMillis())
             val contentValues = ContentValues().apply {
@@ -167,16 +157,16 @@ class VideoCaptureFragment : Fragment() {
                         is VideoRecordEvent.Start -> {
                             isRecording = true
                             binding.buttonRecordVideo.setImageResource(R.drawable.ic_shutter_button)
-                            Toast.makeText(requireContext(), "Запись началась", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireContext(), "Recording has started", Toast.LENGTH_SHORT).show()
                         }
                         is VideoRecordEvent.Finalize -> {
                             if (!event.hasError()) {
                                 val uri = event.outputResults.outputUri
-                                Log.d(TAG, "Видео сохранено: $uri")
-                                Toast.makeText(requireContext(), "Видео сохранено", Toast.LENGTH_SHORT).show()
+                                Log.d(TAG, "Video saved: $uri")
+                                Toast.makeText(requireContext(), "Video saved", Toast.LENGTH_SHORT).show()
                             } else {
-                                Log.e(TAG, "Ошибка записи видео: ${event.error}")
-                                Toast.makeText(requireContext(), "Ошибка записи видео", Toast.LENGTH_SHORT).show()
+                                Log.e(TAG, "Video recording error: ${event.error}")
+                                Toast.makeText(requireContext(), "Video recording error", Toast.LENGTH_SHORT).show()
                             }
                             isRecording = false
                             binding.buttonRecordVideo.setImageResource(R.drawable.ic_shutter_button)
@@ -191,7 +181,6 @@ class VideoCaptureFragment : Fragment() {
             CameraSelector.LENS_FACING_FRONT
         else
             CameraSelector.LENS_FACING_BACK
-        startCamera()
     }
 
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
@@ -213,7 +202,6 @@ class VideoCaptureFragment : Fragment() {
             if (allPermissionsGranted()) {
                 startCamera()
             } else {
-                // Закрытие приложения или показ сообщения
                 requireActivity().finish()
             }
         }

@@ -19,6 +19,7 @@ class MediaViewFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         arguments?.let {
             mediaUri = it.getString("mediaUri")
         }

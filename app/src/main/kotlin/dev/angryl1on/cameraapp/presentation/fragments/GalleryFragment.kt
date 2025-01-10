@@ -37,29 +37,23 @@ class GalleryFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        // Инициализация RecyclerView
-        galleryAdapter = GalleryAdapter(this, mediaUris) // Передаём фрагмент
+        galleryAdapter = GalleryAdapter(this, mediaUris)
         binding.recyclerViewGallery.apply {
             adapter = galleryAdapter
             layoutManager = GridLayoutManager(requireContext(), 3)
         }
 
-        // Загрузка медиа
         loadMedia()
 
-        // Инициализация кнопок
         binding.buttonOpenPhoto.setOnClickListener {
-            // Навигация к экрану создания фото
             findNavController().navigate(R.id.action_gallery_to_photo)
         }
         binding.buttonOpenVideo.setOnClickListener {
-            // Навигация к экрану создания видео
             findNavController().navigate(R.id.action_gallery_to_video)
         }
     }
 
     private fun loadMedia() {
-        // Очистка списка перед загрузкой
         mediaUris.clear()
         Log.d(TAG, "mediaUris cleared")
 

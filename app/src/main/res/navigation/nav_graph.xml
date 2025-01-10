@@ -7,7 +7,7 @@
     <fragment
         android:id="@+id/photoCaptureFragment"
         android:name="dev.angryl1on.cameraapp.presentation.fragments.PhotoCaptureFragment"
-        android:label="Создание Фото">
+        android:label="@string/photo_creation">
         <action
             android:id="@+id/action_photo_to_video"
             app:destination="@id/videoCaptureFragment" />
@@ -19,7 +19,7 @@
     <fragment
         android:id="@+id/videoCaptureFragment"
         android:name="dev.angryl1on.cameraapp.presentation.fragments.VideoCaptureFragment"
-        android:label="Создание Видео">
+        android:label="@string/video_creation">
         <action
             android:id="@+id/action_video_to_photo"
             app:destination="@id/photoCaptureFragment" />
@@ -31,7 +31,7 @@
     <fragment
         android:id="@+id/galleryFragment"
         android:name="dev.angryl1on.cameraapp.presentation.fragments.GalleryFragment"
-        android:label="Галерея">
+        android:label="@string/gallery">
         <action
             android:id="@+id/action_gallery_to_photo"
             app:destination="@id/photoCaptureFragment" />
@@ -54,7 +54,7 @@
     <fragment
         android:id="@+id/mediaViewFragment"
         android:name="dev.angryl1on.cameraapp.presentation.fragments.MediaViewFragment"
-        android:label="Просмотр Медиа">
+        android:label="@string/browse_media">
         <argument
             android:name="mediaUri"
             app:argType="string" />

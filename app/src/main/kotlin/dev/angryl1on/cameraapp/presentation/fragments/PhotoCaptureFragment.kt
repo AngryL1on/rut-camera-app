@@ -37,6 +37,7 @@ class PhotoCaptureFragment : Fragment() {
 
     private var lensFacing: Int = CameraSelector.LENS_FACING_BACK
 
+
     companion object {
         private const val TAG = "PhotoCaptureFragment"
         private const val REQUEST_CODE_PERMISSIONS = 10
@@ -60,16 +61,14 @@ class PhotoCaptureFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        // Проверка разрешений
-        if (allPermissionsGranted()) {
-            startCamera()
-        } else {
+        if (!allPermissionsGranted()) {
             ActivityCompat.requestPermissions(
                 requireActivity(), REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS
             )
-        }
 
-        // Инициализация камеры
+        }
+        startCamera()
+
         binding.buttonTakePhoto.setOnClickListener { takePhoto() }
         binding.buttonSwitchCamera.setOnClickListener { switchCamera() }
         binding.buttonOpenVideo.setOnClickListener {
@@ -86,14 +85,14 @@ class PhotoCaptureFragment : Fragment() {
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
 
+        // Настройка Preview
+        val preview = Preview.Builder().build().also {
+            it.surfaceProvider = binding.previewView.surfaceProvider
+        }
+
         cameraProviderFuture.addListener({
             // Инициализация CameraProvider
-            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
-
-            // Настройка Preview
-            val preview = Preview.Builder().build().also { previewbuilder ->
-                previewbuilder.surfaceProvider = binding.previewView.surfaceProvider
-            }
+            val cameraProvider = cameraProviderFuture.get()
 
             // Настройка ImageCapture
             imageCapture = ImageCapture.Builder().build()
@@ -104,10 +103,8 @@ class PhotoCaptureFragment : Fragment() {
                 .build()
 
             try {
-                // Прерывание предыдущего использования камеры
                 cameraProvider.unbindAll()
 
-                // Привязка use cases к камере
                 cameraProvider.bindToLifecycle(
                     viewLifecycleOwner,
                     cameraSelector,
@@ -115,8 +112,10 @@ class PhotoCaptureFragment : Fragment() {
                     imageCapture
                 )
 
+                Log.d(TAG, "Камера успешно привязана: $cameraSelector")
+
             } catch (exc: Exception) {
-                Log.e(TAG, "Ошибка привязки камеры: ${exc.message}")
+                Log.e(TAG, "Ошибка привязки камеры: ${exc.message}", exc)
             }
 
         }, ContextCompat.getMainExecutor(requireContext()))
@@ -125,7 +124,6 @@ class PhotoCaptureFragment : Fragment() {
     private fun takePhoto() {
         val imageCapture = imageCapture ?: return
 
-        // Создание файла для сохранения фото
         val name = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
             .format(System.currentTimeMillis())
         val contentValues = ContentValues().apply {
@@ -142,16 +140,15 @@ class PhotoCaptureFragment : Fragment() {
             contentValues
         ).build()
 
-        // Сохранение фото
         imageCapture.takePicture(
             outputOptions, ContextCompat.getMainExecutor(requireContext()),
             object : ImageCapture.OnImageSavedCallback {
                 override fun onError(exc: ImageCaptureException) {
-                    Log.e(TAG, "Ошибка сохранения фото: ${exc.message}", exc)
+                    Log.e(TAG, "Error saving photo: ${exc.message}", exc)
                 }
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                    Log.d(TAG, "Фото сохранено: ${output.savedUri}")
+                    Log.d(TAG, "Photo saved: ${output.savedUri}")
                 }
             }
         )
@@ -162,6 +159,7 @@ class PhotoCaptureFragment : Fragment() {
             CameraSelector.LENS_FACING_FRONT
         else
             CameraSelector.LENS_FACING_BACK
+
         startCamera()
     }
 
@@ -184,7 +182,6 @@ class PhotoCaptureFragment : Fragment() {
             if (allPermissionsGranted()) {
                 startCamera()
             } else {
-                // Закрытие приложения или показ сообщения
                 requireActivity().finish()
             }
         }

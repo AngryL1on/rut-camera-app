@@ -14,11 +14,11 @@ import dev.angryl1on.cameraapp.databinding.ItemMediaBinding
 import dev.angryl1on.cameraapp.presentation.fragments.GalleryFragment
 
 class GalleryAdapter(
-    private val fragment: GalleryFragment, // Передаём экземпляр фрагмента
+    private val fragment: GalleryFragment,
     private val mediaUris: List<Uri>
 ) : RecyclerView.Adapter<GalleryAdapter.MediaViewHolder>() {
 
-    inner class MediaViewHolder(val binding: ItemMediaBinding) :
+    class MediaViewHolder(val binding: ItemMediaBinding) :
         RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MediaViewHolder {
@@ -32,9 +32,9 @@ class GalleryAdapter(
         val uri = mediaUris[position]
         val mimeType = fragment.requireContext().contentResolver.getType(uri) ?: ""
 
-        // Настройка Coil для загрузки изображений и видео
         holder.binding.imageViewMedia.load(uri) {
             crossfade(true)
+
             if (mimeType.startsWith("video")) {
                 // Загружаем кадр видео для превью
                 videoFrameMillis(1000) // Загружаем кадр на 1 секунде видео
@@ -48,11 +48,11 @@ class GalleryAdapter(
             holder.binding.imageViewPlayIcon.visibility = View.GONE
         }
 
-        // Обработка нажатия
         holder.binding.root.setOnClickListener {
             val bundle = Bundle().apply {
                 putString("mediaUri", uri.toString())
             }
+
             fragment.findNavController().navigate(R.id.action_gallery_to_mediaView, bundle)
         }
     }
