@@ -10,10 +10,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import dev.angryl1on.cameraapp.R
 import dev.angryl1on.cameraapp.databinding.FragmentGalleryBinding
+import dev.angryl1on.cameraapp.presentation.SharedViewModel
 import dev.angryl1on.cameraapp.presentation.adapters.GalleryAdapter
 
 class GalleryFragment : Fragment() {
@@ -22,11 +24,13 @@ class GalleryFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var galleryAdapter: GalleryAdapter
-    private val mediaUris = mutableListOf<Uri>()
 
     companion object {
         private const val TAG = "GalleryFragment"
     }
+
+    // Инициализация SharedViewModel
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,7 +41,7 @@ class GalleryFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        galleryAdapter = GalleryAdapter(this, mediaUris)
+        galleryAdapter = GalleryAdapter(this, emptyList())
         binding.recyclerViewGallery.apply {
             adapter = galleryAdapter
             layoutManager = GridLayoutManager(requireContext(), 3)
@@ -54,7 +58,7 @@ class GalleryFragment : Fragment() {
     }
 
     private fun loadMedia() {
-        mediaUris.clear()
+        val mediaUris = mutableListOf<Uri>()
         Log.d(TAG, "mediaUris cleared")
 
         val imageCollection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -113,7 +117,11 @@ class GalleryFragment : Fragment() {
         // Логирование количества загруженных медиафайлов
         Log.d(TAG, "Загружено медиафайлов: ${mediaUris.size}")
 
-        galleryAdapter.notifyDataSetChanged()
+        // Обновление SharedViewModel
+        sharedViewModel.setMediaUris(mediaUris)
+
+        // Обновление адаптера
+        galleryAdapter.updateMediaUris(mediaUris)
     }
 
     override fun onDestroyView() {

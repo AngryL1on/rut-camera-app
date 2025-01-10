@@ -34,12 +34,23 @@
             android:contentDescription="@string/switch_camera"
             android:src="@drawable/ic_switch_camera" />
 
+        <!-- Промежуток -->
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
         <ImageButton
             android:id="@+id/button_take_photo"
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:background="@drawable/ic_shutter_button"
             android:contentDescription="@string/take_a_photo" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
         <ImageButton
             android:id="@+id/button_open_video"
@@ -49,6 +60,11 @@
             android:contentDescription="@string/open_video"
             android:src="@drawable/ic_video" />
 
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
         <ImageButton
             android:id="@+id/button_open_gallery"
             android:layout_width="48dp"
@@ -57,4 +73,5 @@
             android:contentDescription="@string/open_gallery"
             android:src="@drawable/ic_gallery" />
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

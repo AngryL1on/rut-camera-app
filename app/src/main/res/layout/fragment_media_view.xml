@@ -6,19 +6,9 @@
     android:layout_height="match_parent"
     tools:context=".presentation.fragments.MediaViewFragment">
 
-    <!-- ImageView для отображения фотографий -->
-    <ImageView
-        android:id="@+id/imageView_full"
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPagerMedia"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"
-        android:scaleType="fitCenter" />
-
-    <!-- VideoView для воспроизведения видео -->
-    <VideoView
-        android:id="@+id/videoView_full"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone" />
+        android:layout_height="match_parent" />
 
 </FrameLayout>

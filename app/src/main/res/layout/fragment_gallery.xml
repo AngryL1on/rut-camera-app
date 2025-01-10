@@ -36,7 +36,13 @@
             android:layout_height="48dp"
             android:background="@android:color/transparent"
             android:contentDescription="@string/open_photo_camera"
-            android:src="@drawable/ic_photo" />
+            android:src="@drawable/ic_photo"
+            android:layout_weight="0.5" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="0.5" />
 
         <ImageButton
             android:id="@+id/button_open_video"
@@ -44,7 +50,8 @@
             android:layout_height="48dp"
             android:background="@android:color/transparent"
             android:contentDescription="@string/open_video_camera"
-            android:src="@drawable/ic_video" />
+            android:src="@drawable/ic_video"
+            android:layout_weight="0.5" />
 
     </LinearLayout>
 

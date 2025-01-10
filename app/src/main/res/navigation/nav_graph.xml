@@ -33,12 +33,6 @@
         android:name="dev.angryl1on.cameraapp.presentation.fragments.GalleryFragment"
         android:label="@string/gallery">
         <action
-            android:id="@+id/action_gallery_to_photo"
-            app:destination="@id/photoCaptureFragment" />
-        <action
-            android:id="@+id/action_gallery_to_video"
-            app:destination="@id/videoCaptureFragment" />
-        <action
             android:id="@+id/action_gallery_to_mediaView"
             app:destination="@id/mediaViewFragment"
             app:enterAnim="@anim/slide_in_right"
@@ -46,17 +40,23 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right">
             <argument
-                android:name="mediaUri"
-                app:argType="string" />
+                android:name="mediaIndex"
+                app:argType="integer" />
         </action>
+        <action
+            android:id="@+id/action_gallery_to_photo"
+            app:destination="@id/photoCaptureFragment" />
+        <action
+            android:id="@+id/action_gallery_to_video"
+            app:destination="@id/videoCaptureFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/mediaViewFragment"
         android:name="dev.angryl1on.cameraapp.presentation.fragments.MediaViewFragment"
-        android:label="@string/browse_media">
+        android:label="MediaView">
         <argument
-            android:name="mediaUri"
-            app:argType="string" />
+            android:name="mediaIndex"
+            app:argType="integer" />
     </fragment>
 </navigation>

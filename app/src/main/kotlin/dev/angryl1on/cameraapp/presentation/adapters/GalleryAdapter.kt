@@ -15,7 +15,7 @@ import dev.angryl1on.cameraapp.presentation.fragments.GalleryFragment
 
 class GalleryAdapter(
     private val fragment: GalleryFragment,
-    private val mediaUris: List<Uri>
+    private var mediaUris: List<Uri>
 ) : RecyclerView.Adapter<GalleryAdapter.MediaViewHolder>() {
 
     class MediaViewHolder(val binding: ItemMediaBinding) :
@@ -36,21 +36,18 @@ class GalleryAdapter(
             crossfade(true)
 
             if (mimeType.startsWith("video")) {
-                // Загружаем кадр видео для превью
-                videoFrameMillis(1000) // Загружаем кадр на 1 секунде видео
+                // Загружаем кадр видео на 1 секунде (1000 миллисекунд)
+                videoFrameMillis(1000)
             }
         }
 
         // Отображение иконки воспроизведения для видео
-        if (mimeType.startsWith("video")) {
-            holder.binding.imageViewPlayIcon.visibility = View.VISIBLE
-        } else {
-            holder.binding.imageViewPlayIcon.visibility = View.GONE
-        }
+        holder.binding.imageViewPlayIcon.visibility =
+            if (mimeType.startsWith("video")) View.VISIBLE else View.GONE
 
         holder.binding.root.setOnClickListener {
             val bundle = Bundle().apply {
-                putString("mediaUri", uri.toString())
+                putInt("mediaIndex", position)
             }
 
             fragment.findNavController().navigate(R.id.action_gallery_to_mediaView, bundle)
@@ -58,4 +55,10 @@ class GalleryAdapter(
     }
 
     override fun getItemCount(): Int = mediaUris.size
+
+    // Метод для обновления списка медиафайлов
+    fun updateMediaUris(newMediaUris: List<Uri>) {
+        mediaUris = newMediaUris
+        notifyDataSetChanged()
+    }
 }
