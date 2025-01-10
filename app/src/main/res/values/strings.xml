@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">rut-camera-app</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="switch_camera">Переключить камеру</string>
+    <string name="take_a_photo">Сделать фото</string>
+    <string name="open_gallery">Открыть галерею</string>
+    <string name="open_video">Открыть видео\n</string>
+    <string name="open_photo_camera">Открыть фото</string>
+    <string name="open_video_camera">Открыть видео</string>
+    <string name="video_recording">Запись видео\n</string>
 </resources>

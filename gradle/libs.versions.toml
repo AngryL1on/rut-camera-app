@@ -47,6 +47,7 @@ androidx-navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx",
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 io-coil = { group = "io.coil-kt", name = "coil", version.ref = "io-coil" }
+io-coil-video = { group = "io.coil-kt", name = "coil-video", version.ref = "io-coil" }
 
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }

@@ -38,7 +38,7 @@ android {
     }
 
     buildFeatures {
-        dataBinding = true
+        viewBinding = true
     }
 }
 
@@ -77,6 +77,7 @@ dependencies {
      * Coil dependencies
      */
     implementation(libs.io.coil)
+    implementation(libs.io.coil.video)
 
     /**
      * Lifecycle dependencies

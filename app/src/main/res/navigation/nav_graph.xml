@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/photoCaptureFragment">
+
+    <fragment
+        android:id="@+id/photoCaptureFragment"
+        android:name="dev.angryl1on.cameraapp.presentation.fragments.PhotoCaptureFragment"
+        android:label="Создание Фото">
+        <action
+            android:id="@+id/action_photo_to_video"
+            app:destination="@id/videoCaptureFragment" />
+        <action
+            android:id="@+id/action_photo_to_gallery"
+            app:destination="@id/galleryFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/videoCaptureFragment"
+        android:name="dev.angryl1on.cameraapp.presentation.fragments.VideoCaptureFragment"
+        android:label="Создание Видео">
+        <action
+            android:id="@+id/action_video_to_photo"
+            app:destination="@id/photoCaptureFragment" />
+        <action
+            android:id="@+id/action_video_to_gallery"
+            app:destination="@id/galleryFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/galleryFragment"
+        android:name="dev.angryl1on.cameraapp.presentation.fragments.GalleryFragment"
+        android:label="Галерея">
+        <action
+            android:id="@+id/action_gallery_to_photo"
+            app:destination="@id/photoCaptureFragment" />
+        <action
+            android:id="@+id/action_gallery_to_video"
+            app:destination="@id/videoCaptureFragment" />
+        <action
+            android:id="@+id/action_gallery_to_mediaView"
+            app:destination="@id/mediaViewFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right">
+            <argument
+                android:name="mediaUri"
+                app:argType="string" />
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/mediaViewFragment"
+        android:name="dev.angryl1on.cameraapp.presentation.fragments.MediaViewFragment"
+        android:label="Просмотр Медиа">
+        <argument
+            android:name="mediaUri"
+            app:argType="string" />
+    </fragment>
+</navigation>
