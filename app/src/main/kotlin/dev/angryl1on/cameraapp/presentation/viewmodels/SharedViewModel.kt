@@ -1,4 +1,4 @@
-package dev.angryl1on.cameraapp.presentation
+package dev.angryl1on.cameraapp.presentation.viewmodels
 
 import android.net.Uri
 import androidx.lifecycle.LiveData

@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import dev.angryl1on.cameraapp.databinding.FragmentMediaViewBinding
-import dev.angryl1on.cameraapp.presentation.SharedViewModel
+import dev.angryl1on.cameraapp.presentation.viewmodels.SharedViewModel
 import dev.angryl1on.cameraapp.presentation.adapters.MediaPagerAdapter
 
 class MediaViewFragment : Fragment() {

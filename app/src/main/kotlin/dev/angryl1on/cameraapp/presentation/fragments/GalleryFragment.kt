@@ -15,22 +15,20 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import dev.angryl1on.cameraapp.R
 import dev.angryl1on.cameraapp.databinding.FragmentGalleryBinding
-import dev.angryl1on.cameraapp.presentation.SharedViewModel
+import dev.angryl1on.cameraapp.presentation.viewmodels.SharedViewModel
 import dev.angryl1on.cameraapp.presentation.adapters.GalleryAdapter
 
 class GalleryFragment : Fragment() {
 
     private var _binding: FragmentGalleryBinding? = null
     private val binding get() = _binding!!
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     private lateinit var galleryAdapter: GalleryAdapter
 
     companion object {
         private const val TAG = "GalleryFragment"
     }
-
-    // Инициализация SharedViewModel
-    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,6 +40,7 @@ class GalleryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         galleryAdapter = GalleryAdapter(this, emptyList())
+
         binding.recyclerViewGallery.apply {
             adapter = galleryAdapter
             layoutManager = GridLayoutManager(requireContext(), 3)
