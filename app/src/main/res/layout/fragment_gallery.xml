@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/gallery_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?android:colorBackground"
     tools:context=".presentation.fragments.GalleryFragment">
 
     <androidx.recyclerview.widget.RecyclerView
@@ -12,47 +14,65 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:padding="4dp"
-        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        app:spanCount="3"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/buttonContainer"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:listitem="@layout/item_media" />
 
     <LinearLayout
         android:id="@+id/buttonContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:gravity="center"
+        android:orientation="horizontal"
         android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
+        <Button
+            android:id="@+id/button_multi_select"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:theme="@style/Widget.Material3.Button.TextButton"
+            android:textColor="?attr/colorOnPrimary"
+            android:text="@string/multi_select" />
+
+        <!-- ImageButton для удаления выбранных -->
         <ImageButton
-            android:id="@+id/button_open_photo"
+            android:id="@+id/button_delete_selected"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:layout_marginEnd="16dp"
             android:background="@android:color/transparent"
-            android:contentDescription="@string/open_photo_camera"
-            android:src="@drawable/ic_photo"
-            android:layout_weight="0.5" />
+            android:src="@drawable/ic_delete"
+            android:contentDescription="@string/delete_selected"
+            android:drawableTint="?attr/colorOnBackground" />
 
         <Space
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_weight="0.5" />
+            android:layout_weight="1" />
+
+        <ImageButton
+            android:id="@+id/button_open_photo"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="16dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_photo"
+            android:contentDescription="@string/open_photo_camera"
+            android:drawableTint="?attr/colorOnBackground" />
 
         <ImageButton
             android:id="@+id/button_open_video"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:background="@android:color/transparent"
-            android:contentDescription="@string/open_video_camera"
             android:src="@drawable/ic_video"
-            android:layout_weight="0.5" />
-
+            android:contentDescription="@string/open_video_camera"
+            android:drawableTint="?attr/colorOnBackground" />
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

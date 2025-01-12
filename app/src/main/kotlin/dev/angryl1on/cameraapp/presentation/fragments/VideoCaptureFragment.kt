@@ -49,16 +49,19 @@ class VideoCaptureFragment : Fragment() {
     companion object {
         private const val TAG = "VideoCaptureFragment"
         private const val REQUEST_CODE_PERMISSIONS = 20
-        private val REQUIRED_PERMISSIONS =
-            mutableListOf(
-                Manifest.permission.CAMERA,
-                Manifest.permission.RECORD_AUDIO,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ).apply {
-                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
-                    add(Manifest.permission.READ_EXTERNAL_STORAGE)
-                }
-            }.toTypedArray()
+
+        /**
+         * List of required permissions for video recording functionality.
+         */
+        private val REQUIRED_PERMISSIONS = mutableListOf(
+            Manifest.permission.CAMERA,
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        ).apply {
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
+                add(Manifest.permission.READ_EXTERNAL_STORAGE)
+            }
+        }.toTypedArray()
     }
 
     override fun onCreateView(
@@ -90,6 +93,9 @@ class VideoCaptureFragment : Fragment() {
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
 
+    /**
+     * Starts the camera and initializes the video capture functionality.
+     */
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
 
@@ -126,6 +132,10 @@ class VideoCaptureFragment : Fragment() {
         }, ContextCompat.getMainExecutor(requireContext()))
     }
 
+    /**
+     * Toggles the recording state. Starts a new recording if not already recording,
+     * or stops the current recording and saves the video.
+     */
     @SuppressLint("MissingPermission")
     private fun toggleRecording() {
         if (isRecording) {
@@ -157,16 +167,19 @@ class VideoCaptureFragment : Fragment() {
                         is VideoRecordEvent.Start -> {
                             isRecording = true
                             binding.buttonRecordVideo.setImageResource(R.drawable.ic_shutter_button)
-                            Toast.makeText(requireContext(), "Recording has started", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireContext(),
+                                getString(R.string.recording_has_started), Toast.LENGTH_SHORT).show()
                         }
                         is VideoRecordEvent.Finalize -> {
                             if (!event.hasError()) {
                                 val uri = event.outputResults.outputUri
                                 Log.d(TAG, "Video saved: $uri")
-                                Toast.makeText(requireContext(), "Video saved", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(requireContext(),
+                                    getString(R.string.video_saved), Toast.LENGTH_SHORT).show()
                             } else {
                                 Log.e(TAG, "Video recording error: ${event.error}")
-                                Toast.makeText(requireContext(), "Video recording error", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(requireContext(),
+                                    getString(R.string.video_recording_error), Toast.LENGTH_SHORT).show()
                             }
                             isRecording = false
                             binding.buttonRecordVideo.setImageResource(R.drawable.ic_shutter_button)
@@ -176,6 +189,9 @@ class VideoCaptureFragment : Fragment() {
         }
     }
 
+    /**
+     * Toggles the camera between the front and back lenses.
+     */
     private fun switchCamera() {
         lensFacing = if (lensFacing == CameraSelector.LENS_FACING_BACK)
             CameraSelector.LENS_FACING_FRONT
@@ -183,6 +199,11 @@ class VideoCaptureFragment : Fragment() {
             CameraSelector.LENS_FACING_BACK
     }
 
+    /**
+     * Checks if all required permissions for video recording are granted.
+     *
+     * @return `true` if all permissions are granted, `false` otherwise.
+     */
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(
             requireContext(), it
@@ -195,6 +216,14 @@ class VideoCaptureFragment : Fragment() {
         cameraExecutor.shutdown()
     }
 
+    /**
+     * Handles the result of the permission request. If permissions are granted, starts the camera.
+     * If not, finishes the activity.
+     *
+     * @param requestCode The request code for the permissions.
+     * @param permissions The array of requested permissions.
+     * @param grantResults The results for each requested permission.
+     */
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<String>, grantResults: IntArray,
     ) {
