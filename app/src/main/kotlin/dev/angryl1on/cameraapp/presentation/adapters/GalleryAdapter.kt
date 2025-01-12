@@ -3,12 +3,14 @@ package dev.angryl1on.cameraapp.presentation.adapters
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import coil.decode.VideoFrameDecoder
 import coil.load
 import coil.request.videoFrameMillis
 import dev.angryl1on.cameraapp.R
@@ -69,7 +71,10 @@ class GalleryAdapter(
         holder.binding.imageViewMedia.load(uri) {
             crossfade(true)
             if (mimeType.startsWith("video")) {
-                videoFrameMillis(1000)
+                decoderFactory { result, options, _ ->
+                    VideoFrameDecoder(result.source, options)
+                }
+                videoFrameMillis(1)
             }
         }
 
