@@ -79,5 +79,4 @@
             android:src="@drawable/ic_gallery"
             android:drawableTint="?attr/colorOnBackground" />
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

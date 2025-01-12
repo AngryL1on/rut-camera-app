@@ -22,5 +22,4 @@
         android:visibility="gone"
         android:src="@drawable/ic_play_circle"
         app:tint="?attr/colorOnBackground" />
-
 </FrameLayout>

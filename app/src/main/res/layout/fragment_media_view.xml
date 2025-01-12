@@ -23,5 +23,4 @@
         android:src="@drawable/ic_delete"
         android:contentDescription="@string/delete_file"
         android:drawableTint="?attr/colorOnBackground" />
-
 </FrameLayout>

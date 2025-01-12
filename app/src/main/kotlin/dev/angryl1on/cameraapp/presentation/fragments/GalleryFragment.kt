@@ -1,6 +1,5 @@
 package dev.angryl1on.cameraapp.presentation.fragments
 
-import android.app.AlertDialog
 import android.content.ContentUris
 import android.net.Uri
 import android.os.Build
@@ -43,32 +42,41 @@ class GalleryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         galleryAdapter = GalleryAdapter(this, emptyList())
 
+        // Set up RecyclerView with a grid layout
         binding.recyclerViewGallery.apply {
             adapter = galleryAdapter
             layoutManager = GridLayoutManager(requireContext(), 3)
         }
 
-        // Обычный клик (когда не в режиме мультивыбора)
+        // Handle single item clicks
         galleryAdapter.onItemClick = { position ->
             val bundle = Bundle().apply { putInt("mediaIndex", position) }
             findNavController().navigate(R.id.action_gallery_to_mediaView, bundle)
         }
 
-        // Когда меняется список выделенных элементов
+        // Handle changes in the selection count during multi-select mode
         galleryAdapter.onSelectionChanged = { count ->
-            Toast.makeText(requireContext(), "Выбрано: $count", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.selected_files, count),
+                Toast.LENGTH_SHORT
+            ).show()
         }
 
-        // Кнопка включения/выключения режима множественного выбора
+        // Toggle multi-select mode
         binding.buttonMultiSelect.setOnClickListener {
             galleryAdapter.isMultiSelectMode = !galleryAdapter.isMultiSelectMode
         }
 
-        // Кнопка удаления выбранных
+        // Delete selected items
         binding.buttonDeleteSelected.setOnClickListener {
             val selectedUris = galleryAdapter.getSelectedUris()
             if (selectedUris.isEmpty()) {
-                Toast.makeText(requireContext(), "Ничего не выбрано", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.nothing_is_selected),
+                    Toast.LENGTH_SHORT
+                ).show()
                 return@setOnClickListener
             }
             deleteMultipleFiles(selectedUris)
@@ -76,15 +84,21 @@ class GalleryFragment : Fragment() {
 
         loadMedia()
 
+        // Navigate to the photo capture screen
         binding.buttonOpenPhoto.setOnClickListener {
             findNavController().navigate(R.id.action_gallery_to_photo)
         }
+
+        // Navigate to the video recording screen
         binding.buttonOpenVideo.setOnClickListener {
             findNavController().navigate(R.id.action_gallery_to_video)
         }
     }
 
-
+    /**
+     * Loads media files (images and videos) from the device's storage and updates the gallery adapter.
+     * The media files are loaded in descending order of their addition date.
+     */
     private fun loadMedia() {
         val mediaUris = mutableListOf<Uri>()
         Log.d(TAG, "mediaUris cleared")
@@ -106,7 +120,7 @@ class GalleryFragment : Fragment() {
             MediaStore.MediaColumns.MIME_TYPE
         )
 
-        // Загрузка изображений
+        // Load images
         val imageQuery = requireContext().contentResolver.query(
             imageCollection,
             projection,
@@ -124,7 +138,7 @@ class GalleryFragment : Fragment() {
             }
         }
 
-        // Загрузка видео
+        // Load videos
         val videoQuery = requireContext().contentResolver.query(
             videoCollection,
             projection,
@@ -142,18 +156,18 @@ class GalleryFragment : Fragment() {
             }
         }
 
-        // Логирование количества загруженных медиафайлов
-        Log.d(TAG, "Загружено медиафайлов: ${mediaUris.size}")
+        // Log the number of media files loaded
+        Log.d(TAG, "Uploaded media files: ${mediaUris.size}")
 
-        // Обновление SharedViewModel
+        // Update SharedViewModel and the adapter
         sharedViewModel.setMediaUris(mediaUris)
-
-        // Обновление адаптера
         galleryAdapter.updateMediaUris(mediaUris)
     }
 
     /**
-     * Удаление сразу нескольких файлов
+     * Deletes multiple media files from the device's storage and updates the UI.
+     *
+     * @param uris A list of URIs representing the media files to delete.
      */
     private fun deleteMultipleFiles(uris: List<Uri>) {
         var successCount = 0
@@ -164,20 +178,33 @@ class GalleryFragment : Fragment() {
                     successCount++
                 }
             } catch (e: SecurityException) {
-                Toast.makeText(requireContext(), "Нет прав на удаление файла $uri", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.no_rights_to_delete) + "$uri",
+                    Toast.LENGTH_SHORT
+                ).show()
             } catch (e: Exception) {
-                Toast.makeText(requireContext(), "Ошибка при удалении $uri: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.no_rights_to_delete) + "$uri: ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
+
         if (successCount > 0) {
-            // Обновляем адаптер и SharedViewModel
+            // Update adapter and SharedViewModel
             galleryAdapter.removeSelected()
 
             val updatedList = sharedViewModel.mediaUris.value?.toMutableList()
             uris.forEach { updatedList?.remove(it) }
             sharedViewModel.setMediaUris(updatedList ?: emptyList())
 
-            Toast.makeText(requireContext(), "Удалено файлов: $successCount", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.deleted_files, successCount),
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 

@@ -36,6 +36,7 @@ class ImageViewFragment : Fragment() {
         val uriString = arguments?.getString(ARG_URI) ?: return
         val uri = Uri.parse(uriString)
 
+        // Load the image into the ImageView with a crossfade effect
         binding.imageViewFull.load(uri) {
             crossfade(true)
         }

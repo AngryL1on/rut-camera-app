@@ -31,7 +31,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Текстовая кнопка “Выделить” (пример) -->
         <Button
             android:id="@+id/button_multi_select"
             android:layout_width="wrap_content"
@@ -57,7 +56,6 @@
             android:layout_height="0dp"
             android:layout_weight="1" />
 
-        <!-- ImageButton для открытия фото камеры -->
         <ImageButton
             android:id="@+id/button_open_photo"
             android:layout_width="48dp"
@@ -68,7 +66,6 @@
             android:contentDescription="@string/open_photo_camera"
             android:drawableTint="?attr/colorOnBackground" />
 
-        <!-- ImageButton для открытия видео камеры -->
         <ImageButton
             android:id="@+id/button_open_video"
             android:layout_width="48dp"
@@ -77,7 +74,5 @@
             android:src="@drawable/ic_video"
             android:contentDescription="@string/open_video_camera"
             android:drawableTint="?attr/colorOnBackground" />
-
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

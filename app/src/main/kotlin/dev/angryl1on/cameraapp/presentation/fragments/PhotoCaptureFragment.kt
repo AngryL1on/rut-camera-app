@@ -37,19 +37,21 @@ class PhotoCaptureFragment : Fragment() {
 
     private var lensFacing: Int = CameraSelector.LENS_FACING_BACK
 
-
     companion object {
         private const val TAG = "PhotoCaptureFragment"
         private const val REQUEST_CODE_PERMISSIONS = 10
-        private val REQUIRED_PERMISSIONS =
-            mutableListOf(
-                Manifest.permission.CAMERA,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ).apply {
-                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
-                    add(Manifest.permission.RECORD_AUDIO)
-                }
-            }.toTypedArray()
+
+        /**
+         * List of required permissions for the camera and storage functionality.
+         */
+        private val REQUIRED_PERMISSIONS = mutableListOf(
+            Manifest.permission.CAMERA,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        ).apply {
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
+                add(Manifest.permission.RECORD_AUDIO)
+            }
+        }.toTypedArray()
     }
 
     override fun onCreateView(
@@ -65,8 +67,8 @@ class PhotoCaptureFragment : Fragment() {
             ActivityCompat.requestPermissions(
                 requireActivity(), REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS
             )
-
         }
+
         startCamera()
 
         binding.buttonTakePhoto.setOnClickListener { takePhoto() }
@@ -82,29 +84,30 @@ class PhotoCaptureFragment : Fragment() {
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
 
+    /**
+     * Starts the camera with the current lens facing.
+     * Configures the preview and sets up the [ImageCapture] use case.
+     */
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
 
-        // Настройка Preview
+        // Configure the Preview use case
         val preview = Preview.Builder().build().also {
             it.surfaceProvider = binding.previewView.surfaceProvider
         }
 
         cameraProviderFuture.addListener({
-            // Инициализация CameraProvider
             val cameraProvider = cameraProviderFuture.get()
 
-            // Настройка ImageCapture
+            // Configure the ImageCapture use case
             imageCapture = ImageCapture.Builder().build()
 
-            // Выбор камеры
             val cameraSelector = CameraSelector.Builder()
                 .requireLensFacing(lensFacing)
                 .build()
 
             try {
                 cameraProvider.unbindAll()
-
                 cameraProvider.bindToLifecycle(
                     viewLifecycleOwner,
                     cameraSelector,
@@ -112,15 +115,17 @@ class PhotoCaptureFragment : Fragment() {
                     imageCapture
                 )
 
-                Log.d(TAG, "Камера успешно привязана: $cameraSelector")
-
+                Log.d(TAG, "Camera successfully bound: $cameraSelector")
             } catch (exc: Exception) {
-                Log.e(TAG, "Ошибка привязки камеры: ${exc.message}", exc)
+                Log.e(TAG, "Error binding camera: ${exc.message}", exc)
             }
 
         }, ContextCompat.getMainExecutor(requireContext()))
     }
 
+    /**
+     * Captures a photo and saves it to external storage using the [ImageCapture] use case.
+     */
     private fun takePhoto() {
         val imageCapture = imageCapture ?: return
 
@@ -144,16 +149,19 @@ class PhotoCaptureFragment : Fragment() {
             outputOptions, ContextCompat.getMainExecutor(requireContext()),
             object : ImageCapture.OnImageSavedCallback {
                 override fun onError(exc: ImageCaptureException) {
-                    Log.e(TAG, "Error saving photo: ${exc.message}", exc)
+                    Log.e(TAG, getString(R.string.error_saving_photo, exc.message), exc)
                 }
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                    Log.d(TAG, "Photo saved: ${output.savedUri}")
+                    Log.d(TAG, getString(R.string.photo_saved, output.savedUri))
                 }
             }
         )
     }
 
+    /**
+     * Toggles between the front and back cameras and restarts the camera preview.
+     */
     private fun switchCamera() {
         lensFacing = if (lensFacing == CameraSelector.LENS_FACING_BACK)
             CameraSelector.LENS_FACING_FRONT
@@ -163,18 +171,34 @@ class PhotoCaptureFragment : Fragment() {
         startCamera()
     }
 
+    /**
+     * Checks if all required permissions have been granted.
+     *
+     * @return `true` if all permissions are granted, `false` otherwise.
+     */
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(
             requireContext(), it
         ) == PackageManager.PERMISSION_GRANTED
     }
 
+    /**
+     * Cleans up resources, including shutting down the camera executor.
+     */
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
         cameraExecutor.shutdown()
     }
 
+    /**
+     * Handles the result of the permission request. If permissions are granted, the camera is started.
+     * If permissions are denied, the activity is finished.
+     *
+     * @param requestCode The request code for the permissions.
+     * @param permissions The array of requested permissions.
+     * @param grantResults The results for each requested permission.
+     */
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<String>, grantResults: IntArray,
     ) {

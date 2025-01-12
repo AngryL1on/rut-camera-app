@@ -20,25 +20,37 @@ class GalleryAdapter(
     private var mediaUris: List<Uri>
 ) : RecyclerView.Adapter<GalleryAdapter.MediaViewHolder>() {
 
-    // Храним выделенные элементы
+    // Holds the selected media URIs
     private val selectedUris = mutableSetOf<Uri>()
 
-    // Флаг, указывающий, что мы в режиме множественного выбора
+    /**
+     * Indicates whether the adapter is in multi-select mode.
+     * When disabled, the selected items are cleared.
+     */
     var isMultiSelectMode = false
         set(value) {
             field = value
             if (!value) {
-                // Если режим отключился — сбрасываем выделения
-                selectedUris.clear()
+                selectedUris.clear() // Если режим отключился — сбрасываем выделения
             }
             notifyDataSetChanged()
         }
 
-    // Колбэк на обычный клик
+    /**
+     * Callback invoked on single item click when not in multi-select mode.
+     */
     var onItemClick: ((position: Int) -> Unit)? = null
-    // Колбэк на множественный выбор (изменился список выделенных элементов)
+
+    /**
+     * Callback invoked when the selection count changes in multi-select mode.
+     */
     var onSelectionChanged: ((count: Int) -> Unit)? = null
 
+    /**
+     * A ViewHolder class for binding media items to the RecyclerView.
+     *
+     * @param binding The view binding for the media item layout.
+     */
     class MediaViewHolder(val binding: ItemMediaBinding) :
         RecyclerView.ViewHolder(binding.root)
 
@@ -53,6 +65,7 @@ class GalleryAdapter(
         val uri = mediaUris[position]
         val mimeType = fragment.requireContext().contentResolver.getType(uri) ?: ""
 
+        // Load the media URI into the ImageView, with special handling for video thumbnails
         holder.binding.imageViewMedia.load(uri) {
             crossfade(true)
             if (mimeType.startsWith("video")) {
@@ -60,11 +73,11 @@ class GalleryAdapter(
             }
         }
 
+        // Show or hide the play icon based on the media type
         holder.binding.imageViewPlayIcon.visibility =
             if (mimeType.startsWith("video")) View.VISIBLE else View.GONE
 
-        // 1) Если не в режиме множественного выбора, то при клике просто открываем элемент
-        // 2) Если в режиме — переключаем выделение
+        // Handle item clicks and toggle selection if in multi-select mode
         holder.binding.root.setOnClickListener {
             if (!isMultiSelectMode) {
                 onItemClick?.invoke(position)
@@ -73,7 +86,7 @@ class GalleryAdapter(
             }
         }
 
-        // Визуально выделяем, если элемент выбран
+        // Highlight the item if it is selected
         if (selectedUris.contains(uri)) {
             holder.binding.root.setBackgroundColor(
                 ContextCompat.getColor(fragment.requireContext(), R.color.selectedItemColor)
@@ -85,13 +98,20 @@ class GalleryAdapter(
 
     override fun getItemCount(): Int = mediaUris.size
 
+    /**
+     * Updates the list of media URIs displayed in the adapter.
+     *
+     * @param newMediaUris The new list of media URIs to display.
+     */
     fun updateMediaUris(newMediaUris: List<Uri>) {
         mediaUris = newMediaUris
         notifyDataSetChanged()
     }
 
     /**
-     * Переключает выделение конкретного Uri
+     * Toggles the selection state of a given media URI.
+     *
+     * @param uri The URI of the media item to toggle selection for.
      */
     private fun toggleSelection(uri: Uri) {
         if (selectedUris.contains(uri)) {
@@ -104,12 +124,15 @@ class GalleryAdapter(
     }
 
     /**
-     * Возвращает список выделенных Uri
+     * Retrieves the list of currently selected media URIs.
+     *
+     * @return A list of selected media URIs.
      */
     fun getSelectedUris(): List<Uri> = selectedUris.toList()
 
     /**
-     * Удаляет все выделенные элементы из списка адаптера (после успешного удаления из MediaStore)
+     * Removes the selected media items from the adapter after successful deletion
+     * from the MediaStore.
      */
     fun removeSelected() {
         if (selectedUris.isEmpty()) return
@@ -118,16 +141,5 @@ class GalleryAdapter(
         mediaUris = newList
         selectedUris.clear()
         notifyDataSetChanged()
-    }
-
-    /**
-     * Удаляет одиночный элемент (когда не в режиме multi-select, но удаляем в деталях)
-     */
-    fun removeItem(uri: Uri) {
-        val newList = mediaUris.toMutableList()
-        if (newList.remove(uri)) {
-            mediaUris = newList
-            notifyDataSetChanged()
-        }
     }
 }

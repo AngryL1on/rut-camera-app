@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import dev.angryl1on.cameraapp.R
 import dev.angryl1on.cameraapp.databinding.FragmentMediaViewBinding
 import dev.angryl1on.cameraapp.presentation.viewmodels.SharedViewModel
 import dev.angryl1on.cameraapp.presentation.adapters.MediaPagerAdapter
@@ -25,12 +26,14 @@ class MediaViewFragment : Fragment() {
     private var initialIndex: Int = 0
     private var mediaUris: List<Uri> = emptyList()
 
+    /**
+     * Reads the initial index of the media item to display from the fragment arguments.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             initialIndex = it.getInt("mediaIndex", 0)
         }
-        setHasOptionsMenu(true) // Если хотим меню в Toolbar
     }
 
     override fun onCreateView(
@@ -42,6 +45,7 @@ class MediaViewFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        // Observe media URIs from the shared ViewModel and update the ViewPager
         sharedViewModel.mediaUris.observe(viewLifecycleOwner) { uris ->
             mediaUris = uris
             mediaAdapter = MediaPagerAdapter(this, mediaUris)
@@ -49,50 +53,66 @@ class MediaViewFragment : Fragment() {
             binding.viewPagerMedia.setCurrentItem(initialIndex, false)
         }
 
-        // Пример: кнопка удаления (если вы не хотите меню)
-        // Предположим, у нас есть кнопка в макете
+        // Handle delete button click
         binding.buttonDeleteCurrent.setOnClickListener {
             deleteCurrentItem()
         }
     }
 
+    /**
+     * Deletes the currently displayed media item from the device storage and updates the UI.
+     * If the last item is deleted, navigates back to the previous screen.
+     */
     private fun deleteCurrentItem() {
         val currentPosition = binding.viewPagerMedia.currentItem
         if (currentPosition < 0 || currentPosition >= mediaUris.size) return
         val currentUri = mediaUris[currentPosition]
 
         try {
+            // Attempt to delete the media URI
             val rowsDeleted = requireContext().contentResolver.delete(currentUri, null, null)
+
             if (rowsDeleted > 0) {
-                // Успешно удалили из MediaStore
-                // Удаляем из ViewModel
+                // Update the media list and ViewPager if deletion is successful
                 val updatedList = mediaUris.toMutableList()
+
                 updatedList.removeAt(currentPosition)
                 sharedViewModel.setMediaUris(updatedList)
 
-                // Если нет элементов, просто закрываем экран
                 if (updatedList.isEmpty()) {
+                    // If no media items remain, navigate back
                     findNavController().popBackStack()
                 } else {
-                    // Иначе обновим ViewPager
-                    // mediaAdapter.notifyItemRemoved(currentPosition) – для ViewPager2 с FragmentStateAdapter
-                    // ... Обычно достаточно просто пересоздать адаптер, но можно перехитрить
-                    // Проще всего:
+                    // Update the ViewPager with the new list
                     mediaAdapter = MediaPagerAdapter(this, updatedList)
                     binding.viewPagerMedia.adapter = mediaAdapter
-                    // Ставим позицию на (currentPosition) или (currentPosition - 1)
                     val newPos = currentPosition.coerceAtMost(updatedList.lastIndex)
                     binding.viewPagerMedia.setCurrentItem(newPos, false)
 
-                    Toast.makeText(requireContext(), "Файл удалён", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.file_deleted), Toast.LENGTH_SHORT
+                    ).show()
                 }
             } else {
-                Toast.makeText(requireContext(), "Ошибка при удалении", Toast.LENGTH_SHORT).show()
+                // Show error if deletion failed
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.error_when_deleting), Toast.LENGTH_SHORT
+                ).show()
             }
         } catch (e: SecurityException) {
-            Toast.makeText(requireContext(), "Нет прав на удаление", Toast.LENGTH_SHORT).show()
+            // Handle security exception if lacking permission to delete
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.no_rights_to_delete), Toast.LENGTH_SHORT
+            ).show()
         } catch (e: Exception) {
-            Toast.makeText(requireContext(), "Ошибка: ${e.message}", Toast.LENGTH_SHORT).show()
+            // Handle any other exceptions
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.error, e.message), Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
