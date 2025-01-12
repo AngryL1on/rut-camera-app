@@ -1,36 +1,44 @@
 <resources>
+
+    <!-- Приложение -->
     <string name="app_name">rut-camera-app</string>
 
+    <!-- Управление камерой -->
     <string name="switch_camera">Переключить камеру</string>
     <string name="take_a_photo">Сделать фото</string>
 
+    <!-- Открытие экранов -->
     <string name="open_gallery">Открыть галерею</string>
-    <string name="open_video">Открыть видео</string>
     <string name="open_photo_camera">Открыть фото</string>
+    <string name="open_video">Открыть видео</string>
     <string name="open_video_camera">Открыть видео</string>
 
+    <!-- Запись видео -->
     <string name="video_recording">Запись видео</string>
+    <string name="video_recording_error">Video recording error</string>
+    <string name="recording_has_started">Recording has started</string>
+    <string name="video_saved">Video saved</string>
 
-    <!--  Navigation  -->
+    <!-- Навигация -->
     <string name="photo_creation">Photo Creation</string>
     <string name="video_creation">Video Creation</string>
     <string name="gallery">Gallery</string>
     <string name="browse_media">Browse Media</string>
 
+    <!-- Мульти-выбор / действия в галерее -->
     <string name="multi_select">Give</string>
     <string name="delete_selected">Delete selected ones</string>
     <string name="delete_file">Delete</string>
     <string name="file_deleted">The file has been deleted</string>
-    <string name="error_when_deleting">Error when deleting </string>
-    <string name="no_rights_to_delete">No rights to delete </string>
+    <string name="error_when_deleting">Error when deleting</string>
+    <string name="no_rights_to_delete">No rights to delete</string>
+    <string name="nothing_is_selected">Nothing is selected</string>
+    <string name="selected_files">Selected files: %1$d</string>
+    <string name="deleted_files">Deleted files: %1$d</string>
+
+    <!-- Прочие сообщения и ошибки -->
     <string name="error">Error: %1$s</string>
     <string name="error_saving_photo">Error saving photo: %1$s</string>
     <string name="photo_saved">Photo saved: %1$s</string>
-    <string name="video_recording_error">Video recording error</string>
-    <string name="video_saved">Video saved</string>
-    <string name="recording_has_started">Recording has started</string>
-    <string name="deleted_files">Deleted files: %1$i</string>
-    <string name="nothing_is_selected">Nothing is selected</string>
-    <string name="selected_files">Selected files: %1$i</string>
 
 </resources>
