@@ -38,8 +38,6 @@ class ImageViewFragment : Fragment() {
 
         binding.imageViewFull.load(uri) {
             crossfade(true)
-//            placeholder(R.drawable.placeholder) // Опционально
-//            error(R.drawable.error_image) // Опционально
         }
     }
 

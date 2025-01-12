@@ -1,9 +1,12 @@
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/photo_capture_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?android:colorBackground"
     tools:context=".presentation.fragments.PhotoCaptureFragment">
 
     <androidx.camera.view.PreviewView
@@ -32,9 +35,9 @@
             android:layout_height="48dp"
             android:background="@android:color/transparent"
             android:contentDescription="@string/switch_camera"
-            android:src="@drawable/ic_switch_camera" />
+            android:src="@drawable/ic_switch_camera"
+            android:drawableTint="?attr/colorOnBackground" />
 
-        <!-- Промежуток -->
         <Space
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -45,7 +48,8 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:background="@drawable/ic_shutter_button"
-            android:contentDescription="@string/take_a_photo" />
+            android:contentDescription="@string/take_a_photo"
+            android:drawableTint="?attr/colorOnBackground" />
 
         <Space
             android:layout_width="0dp"
@@ -58,7 +62,8 @@
             android:layout_height="48dp"
             android:background="@android:color/transparent"
             android:contentDescription="@string/open_video"
-            android:src="@drawable/ic_video" />
+            android:src="@drawable/ic_video"
+            android:drawableTint="?attr/colorOnBackground" />
 
         <Space
             android:layout_width="0dp"
@@ -71,7 +76,8 @@
             android:layout_height="48dp"
             android:background="@android:color/transparent"
             android:contentDescription="@string/open_gallery"
-            android:src="@drawable/ic_gallery" />
+            android:src="@drawable/ic_gallery"
+            android:drawableTint="?attr/colorOnBackground" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
