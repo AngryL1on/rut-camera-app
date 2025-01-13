@@ -3,6 +3,8 @@ package dev.angryl1on.cameraapp.presentation.fragments
 import android.Manifest
 import android.content.ContentValues
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.icu.text.SimpleDateFormat
 import android.os.Build
 import android.os.Bundle
@@ -11,6 +13,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
@@ -28,8 +31,7 @@ import java.util.concurrent.Executors
 
 class PhotoCaptureFragment : Fragment() {
 
-    private var _binding: FragmentPhotoCaptureBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var binding: FragmentPhotoCaptureBinding
 
     private var imageCapture: ImageCapture? = null
 
@@ -58,7 +60,7 @@ class PhotoCaptureFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        _binding = FragmentPhotoCaptureBinding.inflate(inflater, container, false)
+        binding = FragmentPhotoCaptureBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -71,7 +73,13 @@ class PhotoCaptureFragment : Fragment() {
 
         startCamera()
 
-        binding.buttonTakePhoto.setOnClickListener { takePhoto() }
+        binding.buttonTakePhoto.setOnClickListener {
+            takePhoto()
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                animateFlash()
+            }
+        }
         binding.buttonSwitchCamera.setOnClickListener { switchCamera() }
         binding.buttonOpenVideo.setOnClickListener {
             findNavController().navigate(R.id.action_photo_to_video)
@@ -187,7 +195,6 @@ class PhotoCaptureFragment : Fragment() {
      */
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
         cameraExecutor.shutdown()
     }
 
@@ -209,5 +216,28 @@ class PhotoCaptureFragment : Fragment() {
                 requireActivity().finish()
             }
         }
+    }
+
+    /**
+     * Animates a flash effect on the screen by temporarily overlaying a white foreground.
+     *
+     * The method uses `postDelayed` to create a brief flash effect by setting the `foreground`
+     * of the root view to a white `ColorDrawable`, then removing it after 50 milliseconds.
+     *
+     * This method requires a minimum API level of 23 (Android 6.0, Marshmallow) due to the use
+     * of the `foreground` property.
+     *
+     * @throws IllegalStateException If called on a device running a lower API level than 23.
+     *
+     * @see android.os.Build.VERSION_CODES.M
+     */
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun animateFlash() {
+        binding.root.postDelayed({
+            binding.root.foreground = ColorDrawable(Color.WHITE)
+            binding.root.postDelayed({
+                binding.root.foreground = null
+            }, 50)
+        }, 100)
     }
 }

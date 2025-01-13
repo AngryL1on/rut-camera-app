@@ -7,6 +7,8 @@ import android.content.pm.PackageManager
 import android.icu.text.SimpleDateFormat
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
@@ -41,6 +43,9 @@ class VideoCaptureFragment : Fragment() {
     private var videoCapture: VideoCapture<Recorder>? = null
     private var recording: Recording? = null
     private var isRecording = false
+
+    private var recordingTimer: Handler? = null
+    private var recordingDuration = 0
 
     private lateinit var cameraExecutor: ExecutorService
 
@@ -133,6 +138,50 @@ class VideoCaptureFragment : Fragment() {
     }
 
     /**
+     * Starts a timer to track the recording duration and updates the UI with the elapsed time.
+     *
+     * The timer updates the displayed time every second in the format `hh:mm:ss`.
+     * It also makes the recording timer view visible when the timer starts.
+     *
+     * @see stopTimer
+     */
+    private fun startTimer() {
+        recordingTimer = Handler(Looper.getMainLooper())
+        recordingDuration = 0
+
+        val updateTimer = object : Runnable {
+            override fun run() {
+                recordingDuration++
+                val hours = recordingDuration / 3600
+                val minutes = (recordingDuration % 3600) / 60
+                val seconds = recordingDuration % 60
+
+                val timeString = String.format("%02d:%02d:%02d", hours, minutes, seconds)
+                binding.recordingTimer.text = timeString
+                binding.recordingTimer.visibility = View.VISIBLE
+
+                recordingTimer?.postDelayed(this, 1000)
+            }
+        }
+        recordingTimer?.postDelayed(updateTimer, 1000)
+    }
+
+    /**
+     * Stops the recording timer and resets the UI.
+     *
+     * The method cancels all pending timer callbacks, hides the recording timer view,
+     * and resets the recording duration to zero.
+     *
+     * @see startTimer
+     */
+    private fun stopTimer() {
+        recordingTimer?.removeCallbacksAndMessages(null)
+        recordingTimer = null
+        binding.recordingTimer.visibility = View.INVISIBLE
+        recordingDuration = 0
+    }
+
+    /**
      * Toggles the recording state. Starts a new recording if not already recording,
      * or stops the current recording and saves the video.
      */
@@ -167,6 +216,7 @@ class VideoCaptureFragment : Fragment() {
                         is VideoRecordEvent.Start -> {
                             isRecording = true
                             binding.buttonRecordVideo.setImageResource(R.drawable.ic_shutter_button)
+                            startTimer()
                             Toast.makeText(requireContext(),
                                 getString(R.string.recording_has_started), Toast.LENGTH_SHORT).show()
                         }
@@ -181,6 +231,7 @@ class VideoCaptureFragment : Fragment() {
                                 Toast.makeText(requireContext(),
                                     getString(R.string.video_recording_error), Toast.LENGTH_SHORT).show()
                             }
+                            stopTimer()
                             isRecording = false
                             binding.buttonRecordVideo.setImageResource(R.drawable.ic_shutter_button)
                         }
