@@ -11,8 +11,7 @@ import dev.angryl1on.cameraapp.databinding.FragmentImageViewBinding
 
 class ImageViewFragment : Fragment() {
 
-    private var _binding: FragmentImageViewBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var binding: FragmentImageViewBinding
 
     companion object {
         private const val ARG_URI = "mediaUri"
@@ -28,7 +27,7 @@ class ImageViewFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        _binding = FragmentImageViewBinding.inflate(inflater, container, false)
+        binding = FragmentImageViewBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -40,10 +39,5 @@ class ImageViewFragment : Fragment() {
         binding.imageViewFull.load(uri) {
             crossfade(true)
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

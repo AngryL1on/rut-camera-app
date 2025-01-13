@@ -2,7 +2,6 @@ package dev.angryl1on.cameraapp.presentation.fragments
 
 import android.net.Uri
 import android.os.Bundle
-import android.view.GestureDetector
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,8 +16,7 @@ import dev.angryl1on.cameraapp.presentation.adapters.MediaPagerAdapter
 
 class MediaViewFragment : Fragment() {
 
-    private var _binding: FragmentMediaViewBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var binding: FragmentMediaViewBinding
 
     private lateinit var mediaAdapter: MediaPagerAdapter
     private val sharedViewModel: SharedViewModel by activityViewModels()
@@ -40,7 +38,7 @@ class MediaViewFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        _binding = FragmentMediaViewBinding.inflate(inflater, container, false)
+        binding = FragmentMediaViewBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -114,10 +112,5 @@ class MediaViewFragment : Fragment() {
                 getString(R.string.error, e.message), Toast.LENGTH_SHORT
             ).show()
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

@@ -32,11 +32,9 @@ import java.util.concurrent.Executors
 class PhotoCaptureFragment : Fragment() {
 
     private lateinit var binding: FragmentPhotoCaptureBinding
-
-    private var imageCapture: ImageCapture? = null
-
     private lateinit var cameraExecutor: ExecutorService
 
+    private var imageCapture: ImageCapture? = null
     private var lensFacing: Int = CameraSelector.LENS_FACING_BACK
 
     companion object {

@@ -12,8 +12,7 @@ import dev.angryl1on.cameraapp.databinding.FragmentVideoViewBinding
 
 class VideoViewFragment : Fragment() {
 
-    private var _binding: FragmentVideoViewBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var binding: FragmentVideoViewBinding
 
     private var mediaUri: String? = null
 
@@ -44,7 +43,7 @@ class VideoViewFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        _binding = FragmentVideoViewBinding.inflate(inflater, container, false)
+        binding = FragmentVideoViewBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -72,10 +71,5 @@ class VideoViewFragment : Fragment() {
                 }
             }
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

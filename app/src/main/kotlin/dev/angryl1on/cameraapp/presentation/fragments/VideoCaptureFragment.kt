@@ -37,8 +37,7 @@ import java.util.concurrent.Executors
 
 class VideoCaptureFragment : Fragment() {
 
-    private var _binding: FragmentVideoCaptureBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var binding: FragmentVideoCaptureBinding
 
     private var videoCapture: VideoCapture<Recorder>? = null
     private var recording: Recording? = null
@@ -73,7 +72,7 @@ class VideoCaptureFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        _binding = FragmentVideoCaptureBinding.inflate(inflater, container, false)
+        binding = FragmentVideoCaptureBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -263,7 +262,6 @@ class VideoCaptureFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
         cameraExecutor.shutdown()
     }
 

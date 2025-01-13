@@ -21,8 +21,7 @@ import dev.angryl1on.cameraapp.presentation.adapters.GalleryAdapter
 
 class GalleryFragment : Fragment() {
 
-    private var _binding: FragmentGalleryBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var binding: FragmentGalleryBinding
     private val sharedViewModel: SharedViewModel by activityViewModels()
 
     private lateinit var galleryAdapter: GalleryAdapter
@@ -35,7 +34,7 @@ class GalleryFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        _binding = FragmentGalleryBinding.inflate(inflater, container, false)
+        binding = FragmentGalleryBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -206,10 +205,5 @@ class GalleryFragment : Fragment() {
                 Toast.LENGTH_SHORT
             ).show()
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }
